@@ -50,12 +50,12 @@ export const ExpensePieChart = ({ transactions }: ExpensePieChartProps) => {
                             paddingAngle={5}
                             dataKey="value"
                         >
-                            {data.map((entry, index) => (
+                            {data.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
                         <Tooltip
-                            formatter={(value: number) => `${value.toLocaleString()}원`}
+                            formatter={(value: number | string | Array<number | string> | undefined) => `${Number(value || 0).toLocaleString()}원`}
                         />
                         <Legend />
                     </PieChart>
