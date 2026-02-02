@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { TransactionType } from '../hooks/useTransactions';
 
 interface TransactionFormProps {
+    initialDate?: string;
     onSubmit: (data: {
         date: string;
         amount: number;
@@ -12,9 +13,9 @@ interface TransactionFormProps {
     onCancel: () => void;
 }
 
-export const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, onCancel }) => {
+export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
-        date: new Date().toISOString().split('T')[0],
+        date: initialDate || new Date().toISOString().split('T')[0],
         amount: '',
         type: 'expense' as TransactionType,
         category: '',
@@ -101,7 +102,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, onCa
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 py-2 px-4 bg-primary text-white rounded-lg hover:bg-primary/90"
+                    className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold"
                 >
                     저장하기
                 </button>
