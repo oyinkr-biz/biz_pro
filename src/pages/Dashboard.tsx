@@ -39,7 +39,7 @@ export const Dashboard = () => {
                                 </div>
                                 <div>
                                     <h1 className="text-xl font-extrabold text-slate-800">오 ! 가계부</h1>
-                                    <div className="text-[10px] text-slate-300">v1.0.5 Update</div>
+                                    <div className="text-[10px] text-slate-300">v1.0.6 Update (편집 기능 추가)</div>
                                 </div>
                             </div>
                             <div className="text-sm font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
