@@ -110,7 +110,15 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+                <input
+                    type="text"
+                    placeholder="직접 입력하거나 아래에서 선택"
+                    required
+                    className="w-full p-2 border rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                />
                 <div className="grid grid-cols-3 gap-2">
                     {currentCategories.map((cat) => (
                         <button
@@ -126,7 +134,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
                         </button>
                     ))}
                 </div>
-                {/* Fallback for direct input if needed, or keeping it strict */}
             </div>
 
             <div>
