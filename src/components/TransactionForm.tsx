@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, X, Image as ImageIcon } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import type { TransactionType } from '../hooks/useTransactions';
 
 interface TransactionFormProps {
@@ -28,7 +28,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            const newPhotos: string[] = [];
+
             Array.from(e.target.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -118,8 +118,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
                             type="button"
                             onClick={() => setFormData({ ...formData, category: cat })}
                             className={`py-2 px-1 text-xs sm:text-sm rounded-lg border transition-colors ${formData.category === cat
-                                    ? (formData.type === 'income' ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-indigo-100 border-indigo-500 text-indigo-700 font-bold')
-                                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                                ? (formData.type === 'income' ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-indigo-100 border-indigo-500 text-indigo-700 font-bold')
+                                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                                 }`}
                         >
                             {cat}
