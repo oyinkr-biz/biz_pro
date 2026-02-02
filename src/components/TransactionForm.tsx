@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Camera, X } from 'lucide-react';
+import { Camera, X, Settings2, Check } from 'lucide-react';
 import type { TransactionType } from '../hooks/useTransactions';
+import { useCategories } from '../hooks/useCategories';
 
 interface TransactionFormProps {
     initialDate?: string;
@@ -16,6 +17,9 @@ interface TransactionFormProps {
 }
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, onSubmit, onCancel }) => {
+    const { expenseCategories, incomeCategories, updateExpenseCategory, updateIncomeCategory } = useCategories();
+    const [isEditMode, setIsEditMode] = useState(false);
+
     const [formData, setFormData] = useState({
         date: initialDate || new Date().toISOString().split('T')[0],
         amount: '',
@@ -25,6 +29,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
     });
     const [photos, setPhotos] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const currentCategories = formData.type === 'expense' ? expenseCategories : incomeCategories;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -47,24 +53,24 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // If no category selected, use the first one available or '기타'
+        const finalCategory = formData.category || currentCategories[0] || '기타';
+
         onSubmit({
             ...formData,
             amount: Number(formData.amount),
+            category: finalCategory,
             photos
         });
     };
 
-    const EXPENSE_CATEGORIES = [
-        '식비', '카페/간식', '교통/차량', '쇼핑',
-        '취미/여가', '주거/통신', '의료/건강', '생활',
-        '경조사/회비', '교육', '자녀/육아', '기타'
-    ];
-
-    const INCOME_CATEGORIES = [
-        '월급', '용돈', '부수입', '상여금', '금융소득', '기타'
-    ];
-
-    const currentCategories = formData.type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+    const handleCategoryEdit = (index: number, newName: string) => {
+        if (formData.type === 'expense') {
+            updateExpenseCategory(index, newName);
+        } else {
+            updateIncomeCategory(index, newName);
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,28 +116,41 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
-                <input
-                    type="text"
-                    placeholder="직접 입력하거나 아래에서 선택"
-                    required
-                    className="w-full p-2 border rounded-lg mb-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                />
+                <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">카테고리</label>
+                    <button
+                        type="button"
+                        onClick={() => setIsEditMode(!isEditMode)}
+                        className={`text-[11px] flex items-center gap-1 font-bold ${isEditMode ? 'text-emerald-600' : 'text-slate-400'}`}
+                    >
+                        {isEditMode ? <><Check size={12} /> 완료</> : <><Settings2 size={12} /> 이름 편집</>}
+                    </button>
+                </div>
+
                 <div className="grid grid-cols-3 gap-2">
-                    {currentCategories.map((cat) => (
-                        <button
-                            key={cat}
-                            type="button"
-                            onClick={() => setFormData({ ...formData, category: cat })}
-                            className={`py-2 px-1 text-xs sm:text-sm rounded-lg border transition-colors ${formData.category === cat
-                                ? (formData.type === 'income' ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-indigo-100 border-indigo-500 text-indigo-700 font-bold')
-                                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                                }`}
-                        >
-                            {cat}
-                        </button>
+                    {currentCategories.map((cat, index) => (
+                        isEditMode ? (
+                            <input
+                                key={`edit-${index}`}
+                                type="text"
+                                className="py-2 px-1 text-[11px] text-center rounded-lg border border-indigo-200 bg-indigo-50 outline-none focus:border-indigo-500"
+                                value={cat}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleCategoryEdit(index, e.target.value)}
+                            />
+                        ) : (
+                            <button
+                                key={cat}
+                                type="button"
+                                onClick={() => setFormData({ ...formData, category: cat })}
+                                className={`py-2 px-1 text-xs sm:text-sm rounded-lg border transition-colors ${formData.category === cat
+                                    ? (formData.type === 'income' ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-indigo-100 border-indigo-500 text-indigo-700 font-bold')
+                                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                                    }`}
+                            >
+                                {cat}
+                            </button>
+                        )
                     ))}
                 </div>
             </div>
