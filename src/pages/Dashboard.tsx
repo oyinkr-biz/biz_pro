@@ -37,7 +37,10 @@ export const Dashboard = () => {
                                 <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-200">
                                     <Wallet className="text-white" size={20} />
                                 </div>
-                                <h1 className="text-xl font-extrabold text-slate-800">오 ! 가계부</h1>
+                                <div>
+                                    <h1 className="text-xl font-extrabold text-slate-800">오 ! 가계부</h1>
+                                    <div className="text-[10px] text-slate-300">v1.0.5 Update</div>
+                                </div>
                             </div>
                             <div className="text-sm font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
                                 자산: {balance.toLocaleString()}원
