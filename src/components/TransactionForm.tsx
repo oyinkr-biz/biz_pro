@@ -54,6 +54,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
         });
     };
 
+    const EXPENSE_CATEGORIES = [
+        '식비', '카페/간식', '교통/차량', '쇼핑',
+        '취미/여가', '주거/통신', '의료/건강', '생활',
+        '경조사/회비', '교육', '자녀/육아', '기타'
+    ];
+
+    const INCOME_CATEGORIES = [
+        '월급', '용돈', '부수입', '상여금', '금융소득', '기타'
+    ];
+
+    const currentCategories = formData.type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -73,7 +85,11 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
                     <select
                         className="w-full p-2 border rounded-lg"
                         value={formData.type}
-                        onChange={(e) => setFormData({ ...formData, type: e.target.value as TransactionType })}
+                        onChange={(e) => setFormData({
+                            ...formData,
+                            type: e.target.value as TransactionType,
+                            category: '' // Reset category on type change
+                        })}
                     >
                         <option value="expense">지출</option>
                         <option value="income">수입</option>
@@ -94,15 +110,23 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
-                <input
-                    type="text"
-                    placeholder="예: 식비, 교통비"
-                    required
-                    className="w-full p-2 border rounded-lg"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                <div className="grid grid-cols-3 gap-2">
+                    {currentCategories.map((cat) => (
+                        <button
+                            key={cat}
+                            type="button"
+                            onClick={() => setFormData({ ...formData, category: cat })}
+                            className={`py-2 px-1 text-xs sm:text-sm rounded-lg border transition-colors ${formData.category === cat
+                                    ? (formData.type === 'income' ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-indigo-100 border-indigo-500 text-indigo-700 font-bold')
+                                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                                }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+                {/* Fallback for direct input if needed, or keeping it strict */}
             </div>
 
             <div>
