@@ -9,6 +9,7 @@ export interface Transaction {
     type: TransactionType;
     category: string;
     description: string;
+    photos?: string[];
 }
 
 export const useTransactions = () => {

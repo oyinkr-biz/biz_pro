@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { Camera, X, Image as ImageIcon } from 'lucide-react';
 import type { TransactionType } from '../hooks/useTransactions';
 
 interface TransactionFormProps {
@@ -9,6 +10,7 @@ interface TransactionFormProps {
         type: TransactionType;
         category: string;
         description: string;
+        photos?: string[];
     }) => void;
     onCancel: () => void;
 }
@@ -21,12 +23,34 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
         category: '',
         description: '',
     });
+    const [photos, setPhotos] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newPhotos: string[] = [];
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (reader.result) {
+                        setPhotos(prev => [...prev, reader.result as string]);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
+    const removePhoto = (index: number) => {
+        setPhotos(prev => prev.filter((_, i) => i !== index));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSubmit({
             ...formData,
             amount: Number(formData.amount),
+            photos
         });
     };
 
@@ -92,17 +116,51 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ initialDate, o
                 />
             </div>
 
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">사진 첨부 (영수증, 인증샷)</label>
+                <div className="flex flex-wrap gap-2">
+                    {photos.map((photo, index) => (
+                        <div key={index} className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
+                            <img src={photo} alt="preview" className="w-full h-full object-cover" />
+                            <button
+                                type="button"
+                                onClick={() => removePhoto(index)}
+                                className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5"
+                            >
+                                <X size={12} />
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-20 h-20 rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 hover:border-indigo-400 hover:text-indigo-600 transition-colors bg-slate-50"
+                    >
+                        <Camera size={24} />
+                        <span className="text-[10px] mt-1">사진 추가</span>
+                    </button>
+                </div>
+                <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                />
+            </div>
+
             <div className="flex gap-2 pt-2">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-slate-200"
                 >
                     취소
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold"
+                    className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
                 >
                     저장하기
                 </button>

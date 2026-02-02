@@ -107,33 +107,46 @@ export const Dashboard = () => {
                                     ) : (
                                         <div className="space-y-3">
                                             {selectedDateTransactions.map((t) => (
-                                                <div key={t.id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={cn(
-                                                            "w-10 h-10 rounded-full flex items-center justify-center text-lg",
-                                                            t.type === 'income' ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600"
-                                                        )}>
-                                                            {t.type === 'income' ? '💰' : '💸'}
+                                                <div key={t.id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={cn(
+                                                                "w-10 h-10 rounded-full flex items-center justify-center text-lg",
+                                                                t.type === 'income' ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600"
+                                                            )}>
+                                                                {t.type === 'income' ? '💰' : '💸'}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-slate-900">{t.description || t.category}</div>
+                                                                <div className="text-xs text-slate-500">{t.category}</div>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <div className="font-bold text-slate-900">{t.description || t.category}</div>
-                                                            <div className="text-xs text-slate-500">{t.category}</div>
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={cn(
+                                                                "font-bold",
+                                                                t.type === 'income' ? "text-emerald-600" : "text-slate-900"
+                                                            )}>
+                                                                {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString()}
+                                                            </div>
+                                                            <button
+                                                                onClick={() => deleteTransaction(t.id)}
+                                                                className="text-slate-300 hover:text-rose-500"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={cn(
-                                                            "font-bold",
-                                                            t.type === 'income' ? "text-emerald-600" : "text-slate-900"
-                                                        )}>
-                                                            {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString()}
+
+                                                    {/* Photo Gallery */}
+                                                    {t.photos && t.photos.length > 0 && (
+                                                        <div className="flex gap-2 overflow-x-auto pb-1 mt-1">
+                                                            {t.photos.map((photo, i) => (
+                                                                <div key={i} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border border-slate-100 cursor-pointer hover:opacity-90">
+                                                                    <img src={photo} alt="receipt" className="w-full h-full object-cover" />
+                                                                </div>
+                                                            ))}
                                                         </div>
-                                                        <button
-                                                            onClick={() => deleteTransaction(t.id)}
-                                                            className="text-slate-300 hover:text-rose-500"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
